@@ -16,7 +16,7 @@ class ModelSaver:
         self.epoch = 0
 
     def update_weights(self):
-        # 动态调整权重
+
         if self.epoch < 50:
             self.weights = {'DLI': 0.4, 'DMI': 0.3, 'MLI': 0.3}
         elif 50 <= self.epoch < 100:
