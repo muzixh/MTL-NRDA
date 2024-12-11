@@ -10,9 +10,9 @@ class ModelSaver:
         self.args = args
         self.max_score = -np.inf
         self.no_improvement = 0
-        self.weights = {'DLI': 0.4, 'DMI': 0.3, 'MLI': 0.3}  # 初始权重
+        self.weights = {'DLI': 0.4, 'DMI': 0.3, 'MLI': 0.3}
         self.patience = args.early_stopping
-        self.min_improvement = 0.001  # 最小改进阈值
+        self.min_improvement = 0.001
         self.epoch = 0
 
     def update_weights(self):
@@ -48,10 +48,7 @@ class ModelSaver:
         return self.no_improvement >= self.patience
 
 def tab_printer(args):
-    """
-    Function to print the logs in a nice tabular format.
-    :param args: Parameters used for the model.
-    """
+
     args = vars(args)
     keys = sorted(args.keys())
     t = Texttable()
@@ -59,7 +56,6 @@ def tab_printer(args):
     t.add_rows([[k.replace("_", " ").capitalize(), args[k]] for k in keys])
     print(t.draw())
 
-# borrowed from https://github.com/benedekrozemberczki/MixHop-and-N-GCN
 def normalize(mx):
     """Row-normalize sparse matrix"""
     rowsum = np.array(mx.sum(1))
@@ -70,12 +66,7 @@ def normalize(mx):
     return mx
 
 def normalize_adjacency_matrix(A, I):
-    """
-    Creating a normalized adjacency matrix with self loops.
-    :param A: Sparse adjacency matrix.
-    :param I: Identity matrix.
-    :return A_tile_hat: Normalized adjacency matrix.
-    """
+
     A_tilde = A + 2 * I
     degrees = A_tilde.sum(axis=0)[0].tolist()
     D = sp.diags(degrees, [0])
@@ -84,11 +75,7 @@ def normalize_adjacency_matrix(A, I):
     return A_tilde_hat
 
 def create_propagator_matrix(A, device):
-    """
-    Creating a propagator matrix.
-    :param graph: NetworkX graph.
-    :return propagator: Dictionary of matrix indices and values.
-    """
+
     I = sp.eye(A.shape[0])
     A_tilde_hat = normalize_adjacency_matrix(A, I)
     propagator = dict()
@@ -99,11 +86,7 @@ def create_propagator_matrix(A, device):
     return propagator
 
 def features_to_sparse(features, device):
-    """
-    Reading the feature matrix stored as JSON from the disk.
-    :param path: Path to the JSON file.
-    :return out_features: Dict with index and value tensor.
-    """
+
     index_1, index_2 = features.nonzero()
     values = [1.0]*len(index_1)
     node_count = features.shape[0]
@@ -117,10 +100,7 @@ def features_to_sparse(features, device):
     out_features["values"] = torch.FloatTensor(features.data).to(device)
     out_features["dimensions"] = features.shape
     return out_features
-
-# borrowed from https://github.com/kexinhuang12345/SkipGNN
 class Data_LRI(data.Dataset):
-    # df : a list of data, which includes an index for the pair, an index for entity1 and entity2, from a list that combines all the entities. we want the
     def __init__(self, idx_map, labels, df):
         'Initialization'
         self.labels = labels
@@ -175,13 +155,10 @@ def load_data_link_prediction_LRI(path, network_type, inp, device):
                         shape=(len(idx), len(idx)),
                         dtype=np.float32)
 
-    # build symmetric adjacency matrix
     adj = adj + adj.T.multiply(adj.T > adj) - adj.multiply(adj.T > adj)
     adj = create_propagator_matrix(adj, device)
 
     return adj, features, idx_map
-
-
 
 def load_data(args):
 

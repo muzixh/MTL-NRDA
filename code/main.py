@@ -11,8 +11,6 @@ def main():
     args.device = torch.device("cuda:0" if args.cuda else "cpu")
     torch.manual_seed(args.seed)
     tab_printer(args)
-
-    # define a trainer and train HOGCN
     trainer = Trainer(args)
     trainer.fit()
 

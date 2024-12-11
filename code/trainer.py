@@ -231,20 +231,16 @@ class Trainer(object):
 
         # Testing
         self.model = torch.load(f"{self.model_save_folder}model_{self.args.network_type}.pt")
-### DLI____________________
         prediction, auroc_test_DLI, prc_test_DLI, f1_test_DLI, loss_test_DLI = self.score(self.test_loader_DLI, 'DLI')
         print('DLI: loss_test: {:.4f}'.format(loss_test_DLI.item()), 'auroc_test: {:.4f}'.format(auroc_test_DLI),
               'auprc_test: {:.4f}'.format(prc_test_DLI), 'f1_test: {:.4f}'.format(f1_test_DLI))
-### DMI____________________
         prediction, auroc_test_DMI, prc_test_DMI, f1_test_DMI, loss_test_DMI = self.score(self.test_loader_DMI, 'DMI')
         print('DMI: loss_test: {:.4f}'.format(loss_test_DMI.item()), 'auroc_test: {:.4f}'.format(auroc_test_DMI),
               'auprc_test: {:.4f}'.format(prc_test_DMI), 'f1_test: {:.4f}'.format(f1_test_DMI))
-### MLI____________________
         prediction, auroc_test_MLI, prc_test_MLI, f1_test_MLI, loss_test_MLI = self.score(self.test_loader_MLI, 'MLI')
         print('MLI: loss_test: {:.4f}'.format(loss_test_MLI.item()), 'auroc_test: {:.4f}'.format(auroc_test_MLI),
               'auprc_test: {:.4f}'.format(prc_test_MLI), 'f1_test: {:.4f}'.format(f1_test_MLI))
 
-        # saving the results
         max_auroc = max(auroc_test_DLI, auroc_test_MLI, auroc_test_DMI)
         max_prc = max(prc_test_DLI, prc_test_MLI, prc_test_DMI)
         max_f1 = max(f1_test_DLI, f1_test_MLI, f1_test_DMI)
@@ -261,8 +257,6 @@ class Trainer(object):
         file_name = f"{save_folder}input_{self.args.input_type}_fold{self.args.fold_id}_lr{self.args.learning_rate}" \
                     f"_bs{self.args.batch_size}_hidden1_{self.args.hidden1}_hidden2_{self.args.hidden2}_dropout{self.args.dropout}.pt"
         torch.save(results, file_name)
-
-        # saving embeddings
         with torch.no_grad():
             self.model.eval()
             latent_features = self.model.embed(self.propagation_matrix, self.features)
@@ -281,14 +275,7 @@ class Trainer(object):
         torch.save(embeddings, file_name)
 
     def score(self, data_loader, task_type):
-        """
-        Scoring a neural network.
-        :param indices: Indices of nodes involved in accuracy calculation.
-        :return predictions: Probability for link existence
-                roc_score: Area under ROC curve
-                pr_score: Area under PR curve
-                f1_score: F1 score
-        """
+
         self.model.eval()
         y_pred = []
         y_label = []

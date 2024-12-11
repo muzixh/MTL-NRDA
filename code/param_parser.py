@@ -40,22 +40,15 @@ def parameter_parser():
                         help="Order of neighborhood (if order = 3, P ={0, 1, 2, 3}).  Default is 3.")
     parser.add_argument("--dimension", type=int, default=32,
                         help="Dimension for each adjacency. Default is 32.")
-    #xh add
     parser.add_argument('--encoder_layers', type=int, default=2, help="Number of encoder layers.")
     parser.add_argument('--num_heads', type=int, default=4, help="Number of attention heads.")
     parser.add_argument('--d_model', type=int, default=128, help="Dimension of the model.")
     parser.add_argument('--d_ff', type=int, default=256, help="Dimension of feedforward network.")
-
-
-
-
-    # parameter for training with different ratio
     parser.add_argument('--ratio', action='store_true', default=False,
                         help='Train with the missing edges')
     parser.add_argument("--train_percent", type=int, default=10,
                         help="percentage of training edges. Default is 10.")
 
-    # 1 is added to include k = 0
     parser.set_defaults(layers_1=[parser.parse_known_args()[0].dimension]*(parser.parse_known_args()[0].order + 1))
     parser.set_defaults(layers_2=[parser.parse_known_args()[0].dimension]*(parser.parse_known_args()[0].order + 1))
 
